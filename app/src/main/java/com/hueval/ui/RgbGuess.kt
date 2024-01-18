@@ -1,9 +1,20 @@
 package com.hueval.ui
 
-import androidx.compose.foundation.Canvas
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -14,10 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -30,9 +40,9 @@ fun getRandomColour(): Color {
 }
 
 fun calculatePercentageDifference(target: Color, guess: Color): Int {
-    var rDiff = abs(target.red - guess.red)
-    var gDiff = abs(target.green - guess.green)
-    var bDiff = abs(target.blue - guess.blue)
+    val rDiff = abs(target.red - guess.red)
+    val gDiff = abs(target.green - guess.green)
+    val bDiff = abs(target.blue - guess.blue)
     return 100 - ((rDiff + bDiff + gDiff) * 100 / 3).roundToInt()
 }
 
@@ -47,7 +57,24 @@ fun ColourSlider(sliderPosition: Float, onValueChange: (Float) -> Unit) {
 }
 
 @Composable
+fun ColourBox(colour: Color, text: String) {
+    return Column(
+        modifier = Modifier.padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text)
+        Box(modifier = Modifier
+            .padding(PaddingValues(0.dp, 8.dp))
+            .clip(RoundedCornerShape(8.dp))
+            .background(colour)
+            .size(100.dp)
+        )
+    }
+}
+
+@Composable
 fun RgbGuess() {
+    var isResultDisplayed by remember { mutableStateOf(false)}
     var targetColour by remember { mutableStateOf(getRandomColour()) }
     var currentGuess by remember { mutableStateOf(Color(0.5f, 0.5f, 0.5f)) }
 
@@ -56,11 +83,16 @@ fun RgbGuess() {
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Canvas(
-            modifier = Modifier
 
-        ) {
-            drawRoundRect(targetColour, Offset(0F, 0F), Size(200F, 200F), CornerRadius(16f,16f))
+        Row {
+            ColourBox(targetColour, "Target:")
+            AnimatedVisibility(
+                isResultDisplayed,
+                enter = expandHorizontally() + fadeIn() ,
+                exit = shrinkHorizontally(shrinkTowards = Alignment.End) + fadeOut()
+            ) {
+                ColourBox(currentGuess, "Your Guess:")
+            }
         }
 
         ColourSlider(currentGuess.red, onValueChange = {x -> currentGuess = currentGuess.copy(red = x)})
@@ -70,6 +102,7 @@ fun RgbGuess() {
         Button(onClick = {
             targetColour = getRandomColour()
             currentGuess = Color(0.5f, 0.5f, 0.5f)
+            isResultDisplayed = !isResultDisplayed
         }) {
             Text("Submit Guess")
         }
