@@ -9,11 +9,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Slider
@@ -72,6 +75,21 @@ fun ColourBox(colour: Color, text: String) {
     }
 }
 
+fun percentageDiffToResult(diff: Int): String {
+    if (diff == 100) {
+        return "Perfect!"
+    } else if (diff >= 95) {
+        return "Amazing!"
+    } else if (diff >= 85) {
+        return "Good job!"
+    } else if (diff >= 75) {
+        return "Not bad!"
+    } else if (diff >= 50) {
+        return "Close...ish."
+    }
+    return "Oh dear!"
+}
+
 @Composable
 fun RgbGuess() {
     var isResultDisplayed by remember { mutableStateOf(false)}
@@ -84,14 +102,26 @@ fun RgbGuess() {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
-        Row {
-            ColourBox(targetColour, "Target:")
-            AnimatedVisibility(
-                isResultDisplayed,
-                enter = expandHorizontally() + fadeIn() ,
-                exit = shrinkHorizontally(shrinkTowards = Alignment.End) + fadeOut()
-            ) {
-                ColourBox(currentGuess, "Your Guess:")
+        Column (modifier = Modifier.width(IntrinsicSize.Max), horizontalAlignment = Alignment.CenterHorizontally) {
+            Row {
+                ColourBox(targetColour, "Target")
+                AnimatedVisibility(
+                    isResultDisplayed,
+                    enter = expandHorizontally() + fadeIn(),
+                    exit = shrinkHorizontally(shrinkTowards = Alignment.End) + fadeOut()
+                ) {
+                    ColourBox(currentGuess, "Your Guess")
+                }
+            }
+            val percentageDiff = calculatePercentageDifference(targetColour, currentGuess)
+            Row (modifier = Modifier.height(20.dp).width(IntrinsicSize.Max)) {
+                AnimatedVisibility(
+                    isResultDisplayed,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    Text(percentageDiffToResult(percentageDiff) + " You got a " + percentageDiff.toString() + "% match.")
+                }
             }
         }
 
@@ -100,12 +130,14 @@ fun RgbGuess() {
         ColourSlider(currentGuess.blue, onValueChange = {x -> currentGuess = currentGuess.copy(blue = x)})
 
         Button(onClick = {
-            targetColour = getRandomColour()
-            currentGuess = Color(0.5f, 0.5f, 0.5f)
+            // Set up next colour, reset slider
+            if (isResultDisplayed) {
+                targetColour = getRandomColour()
+                currentGuess = Color(0.5f, 0.5f, 0.5f)
+            }
             isResultDisplayed = !isResultDisplayed
-        }) {
-            Text("Submit Guess")
+        }, Modifier.width(150.dp)) {
+            Text(if (isResultDisplayed) "Next Colour" else "Submit Guess")
         }
-        Text(calculatePercentageDifference(targetColour, currentGuess).toString())
     }
 }
