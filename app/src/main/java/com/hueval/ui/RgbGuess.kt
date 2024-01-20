@@ -1,6 +1,9 @@
 package com.hueval.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -92,7 +95,10 @@ fun percentageDiffToResult(diff: Int): String {
 
 @Composable
 fun RgbGuess() {
-    var isResultDisplayed by remember { mutableStateOf(false)}
+    var isResultDisplayed by remember { mutableStateOf(false)}  // TODO replace with state enum?
+    val userGuessVisibleState = remember {  MutableTransitionState(false) }
+    val resultsMessageVisibleState = remember {  MutableTransitionState(false) }
+
     var targetColour by remember { mutableStateOf(getRandomColour()) }
     var currentGuess by remember { mutableStateOf(Color(0.5f, 0.5f, 0.5f)) }
 
@@ -103,22 +109,43 @@ fun RgbGuess() {
     ) {
 
         Column (modifier = Modifier.width(IntrinsicSize.Max), horizontalAlignment = Alignment.CenterHorizontally) {
+            val hideTarget = isResultDisplayed && !userGuessVisibleState.isIdle && !userGuessVisibleState.targetState
             Row {
-                ColourBox(targetColour, "Target")
+                AnimatedVisibility(!hideTarget,
+                    enter = fadeIn(
+                        animationSpec = tween(200, 0)
+                    ),
+                    exit = fadeOut(
+                        animationSpec = tween(500, 0)
+                    )
+                ) {
+                    ColourBox(targetColour, "Target")
+                }
                 AnimatedVisibility(
-                    isResultDisplayed,
-                    enter = expandHorizontally() + fadeIn(),
-                    exit = shrinkHorizontally(shrinkTowards = Alignment.End) + fadeOut()
+                    userGuessVisibleState,
+                    enter = expandHorizontally(
+                        animationSpec = tween(500, 0)
+                    ) + fadeIn(
+                        animationSpec = tween(500, 500)
+                    ),
+                    exit = fadeOut(
+                        animationSpec = tween(500, 0)
+                    ) + shrinkHorizontally(
+                        animationSpec = tween(500, 500),
+                    )
                 ) {
                     ColourBox(currentGuess, "Your Guess")
                 }
             }
+
             val percentageDiff = calculatePercentageDifference(targetColour, currentGuess)
-            Row (modifier = Modifier.height(20.dp).width(IntrinsicSize.Max)) {
+            Row (modifier = Modifier
+                .height(20.dp)
+                .width(IntrinsicSize.Max)) {
                 AnimatedVisibility(
-                    isResultDisplayed,
+                    resultsMessageVisibleState,
                     enter = fadeIn(),
-                    exit = fadeOut()
+                    exit = ExitTransition.None
                 ) {
                     Text(percentageDiffToResult(percentageDiff) + " You got a " + percentageDiff.toString() + "% match.")
                 }
@@ -130,14 +157,33 @@ fun RgbGuess() {
         ColourSlider(currentGuess.blue, onValueChange = {x -> currentGuess = currentGuess.copy(blue = x)})
 
         Button(onClick = {
-            // Set up next colour, reset slider
+            // On "reset"
             if (isResultDisplayed) {
-                targetColour = getRandomColour()
-                currentGuess = Color(0.5f, 0.5f, 0.5f)
+                // Start transitioning components back to guessing state
+                userGuessVisibleState.targetState = false
+                resultsMessageVisibleState.targetState = false
             }
-            isResultDisplayed = !isResultDisplayed
+
+            // On "submit"
+            if (!isResultDisplayed) {
+                // Start transitioning components to results state
+                isResultDisplayed = true
+                userGuessVisibleState.targetState = true
+                resultsMessageVisibleState.targetState = true
+            }
         }, Modifier.width(150.dp)) {
             Text(if (isResultDisplayed) "Next Colour" else "Submit Guess")
+        }
+
+        // Check whether all components have transitioned back to guessing state
+        // If so, reset the colour and enter guessing state
+        if (isResultDisplayed
+            && userGuessVisibleState.isIdle && !userGuessVisibleState.currentState
+            && resultsMessageVisibleState.isIdle && !resultsMessageVisibleState.currentState
+        ) {
+            targetColour = getRandomColour()
+            currentGuess = Color(0.5f, 0.5f, 0.5f)
+            isResultDisplayed = false
         }
     }
 }
