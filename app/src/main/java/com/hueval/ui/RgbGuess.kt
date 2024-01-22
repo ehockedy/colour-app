@@ -1,13 +1,10 @@
 package com.hueval.ui
 
-import androidx.compose.animation.Animatable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.animateColor
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -26,7 +23,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,6 +34,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.hueval.ui.components.RgbGuessSlider
+import com.hueval.ui.components.SliderColour
 import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -54,17 +52,6 @@ fun calculatePercentageDifference(target: Color, guess: Color): Int {
     val gDiff = abs(target.green - guess.green)
     val bDiff = abs(target.blue - guess.blue)
     return 100 - ((rDiff + bDiff + gDiff) * 100 / 3).roundToInt()
-}
-
-@Composable
-fun ColourSlider(sliderPosition: Float, onValueChange: (Float) -> Unit) {
-    Slider(
-        value = sliderPosition,
-        onValueChange,
-        modifier = Modifier.padding(32.dp, 2.dp),
-        steps = 255,
-        valueRange = 0f..1f
-    )
 }
 
 @Composable
@@ -110,6 +97,7 @@ const val RESET_SLIDERS_TRANSITION_MS = 700
 fun RgbGuess() {
     var isResultDisplayed by remember { mutableStateOf(false)}  // TODO replace with state enum?
     var isSliderResetActive by remember { mutableStateOf(false)}
+    var isTargetColourResultShown by remember { mutableStateOf(false)}
     val userGuessVisibleState = remember {  MutableTransitionState(false) }
     val resultsMessageVisibleState = remember {  MutableTransitionState(false) }
 
@@ -174,15 +162,39 @@ fun RgbGuess() {
             }
         }
 
-        if (isResultDisplayed) {
-            // Use the animate-able colour so slider values can reset via transition
-            ColourSlider(resettableGuess.red, onValueChange = {})
-            ColourSlider(resettableGuess.green, onValueChange = {})
-            ColourSlider(resettableGuess.blue, onValueChange = {})
-        } else {
-            ColourSlider(currentGuess.red, onValueChange = {x -> currentGuess = currentGuess.copy(red = x)})
-            ColourSlider(currentGuess.green, onValueChange = { x -> currentGuess = currentGuess.copy(green = x)})
-            ColourSlider(currentGuess.blue, onValueChange = {x -> currentGuess = currentGuess.copy(blue = x)})
+        Column(
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            RgbGuessSlider(
+                SliderColour.Red,
+                if (isResultDisplayed) resettableGuess.red else currentGuess.red,
+                targetColour.red,
+                isTargetColourResultShown
+            ) { x ->
+                if (!isResultDisplayed) {
+                    currentGuess = currentGuess.copy(red = x)
+                }
+            }
+            RgbGuessSlider(
+                SliderColour.Green,
+                if (isResultDisplayed) resettableGuess.green else currentGuess.green,
+                targetColour.green,
+                isTargetColourResultShown
+            ) { x ->
+                if (!isResultDisplayed) {
+                    currentGuess = currentGuess.copy(green = x)
+                }
+            }
+            RgbGuessSlider(
+                SliderColour.Blue,
+                if (isResultDisplayed) resettableGuess.blue else currentGuess.blue,
+                targetColour.blue,
+                isTargetColourResultShown
+            ) { x ->
+                if (!isResultDisplayed) {
+                    currentGuess = currentGuess.copy(blue = x)
+                }
+            }
         }
 
         Button(onClick = {
@@ -191,6 +203,7 @@ fun RgbGuess() {
                 // Start transitioning components back to guessing state
                 userGuessVisibleState.targetState = false
                 resultsMessageVisibleState.targetState = false
+                isTargetColourResultShown = false
 
                 // Start transition to reset sliders
                 if (currentGuess != STARTING_COLOUR) {
@@ -206,6 +219,7 @@ fun RgbGuess() {
                 isResultDisplayed = true
                 userGuessVisibleState.targetState = true
                 resultsMessageVisibleState.targetState = true
+                isTargetColourResultShown = true
             }
         }, Modifier.width(150.dp)) {
             Text(if (isResultDisplayed) "Next Colour" else "Submit Guess")
