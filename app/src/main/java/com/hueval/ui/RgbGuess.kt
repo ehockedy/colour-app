@@ -85,7 +85,7 @@ fun percentageDiffToResult(diff: Int): String {
     return "Oh dear!"
 }
 
-val STARTING_COLOUR = Color(0f, 0f, 0f)
+val STARTING_COLOUR = Color(0.5f, 0.5f, 0.5f)
 
 // Timings for each part of the transition between states
 const val CLEAR_RESULTS_TRANSITION_MS = 400
