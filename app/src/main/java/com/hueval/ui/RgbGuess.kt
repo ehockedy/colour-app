@@ -23,8 +23,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -63,8 +67,8 @@ fun ColourBox(colour: Color, text: String) {
     ) {
         Text(text)
         Card(modifier = Modifier
-                .padding(PaddingValues(0.dp, 8.dp))
-                .size(120.dp),
+            .padding(PaddingValues(0.dp, 8.dp))
+            .size(120.dp),
             shape = RoundedCornerShape(8.dp),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 6.dp
@@ -229,7 +233,9 @@ fun RgbGuess() {
                 resultsMessageVisibleState.targetState = true
                 isTargetColourResultShown = true
             }
-        }, Modifier.width(150.dp)) {
+        }, Modifier.width(150.dp),
+            contentPadding = PaddingValues(8.dp, 16.dp),
+        ) {
             Text(if (isResultDisplayed) "Next Colour" else "Submit Guess")
         }
 

@@ -2,10 +2,10 @@ package com.hueval.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+val Red = Color(0.898f, 0.224f, 0.208f)
+val Green = Color(0.263f, 0.627f, 0.278f)
+val Blue = Color(0.118f, 0.533f, 0.898f)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val MidGray = Color.Gray
+val DarkGray = Color.DarkGray
+val VeryLightGray = Color(0.9f, 0.9f, 0.9f)
