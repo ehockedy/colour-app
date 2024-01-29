@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,7 +17,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -82,7 +85,7 @@ private fun SelectionThumb(colour: Color) {
     ){
         Box(modifier = Modifier
             .fillMaxSize()
-            .background(Color(0.9f, 0.9f, 0.9f, 0.1f))
+            .background(Color(0.9f, 0.9f, 0.9f))
         )
     }
 }
@@ -100,19 +103,23 @@ private fun TargetThumb() {
 enum class SliderColour {
     Red {
         override fun getColour() = Color(0.898f, 0.224f, 0.208f)
+        override fun getLabel() = "R"
     },
     Green {
         override fun getColour() = Color(0.263f, 0.627f, 0.278f)
+        override fun getLabel() = "G"
     },
     Blue {
         override fun getColour() = Color(0.118f, 0.533f, 0.898f)
+        override fun getLabel() = "B"
     };
     abstract fun getColour(): Color
+    abstract fun getLabel(): String
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun RgbGuessSlider(
+fun ColourSlider(
     sliderColour: SliderColour,
     sliderPosition: Float,
     targetPosition: Float,
@@ -123,7 +130,6 @@ fun RgbGuessSlider(
         modifier = Modifier
             .fillMaxWidth()
             .height(TRACK_HEIGHT)
-            .padding(32.dp, 0.dp)
             .clip(CircleShape)
             .background(
                 Brush.verticalGradient(
@@ -134,7 +140,6 @@ fun RgbGuessSlider(
                 )
             ),
     ) {
-
         Box(modifier = Modifier
             .height(TRACK_HEIGHT)
             .width(THUMB_DIAMETER/2 + THUMB_PADDING)
@@ -166,4 +171,33 @@ fun RgbGuessSlider(
             )
         }
     }
+}
+
+@Composable
+fun RgbGuessSlider(
+    sliderColour: SliderColour,
+    sliderPosition: Float,
+    targetPosition: Float,
+    isTargetVisible: Boolean,
+    onValueChange: (Float) -> Unit
+) {
+    Row(modifier = Modifier
+        .padding(32.dp, 2.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            sliderColour.getLabel(),
+            Modifier.padding(
+                end = 16.dp
+            )
+        )
+        ColourSlider(
+            sliderColour,
+            sliderPosition,
+            targetPosition,
+            isTargetVisible,
+            onValueChange
+        )
+    }
+
 }
