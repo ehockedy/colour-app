@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.hueval.ui.components.ElevatedButton
 
 @Composable
 fun MainMenu(
@@ -26,10 +27,10 @@ fun MainMenu(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Button(onClick = onRgbGuessButtonClicked) {
+            ElevatedButton(onClick = onRgbGuessButtonClicked) {
                 Text("RGB Guess") // TODO use text key
             }
-            Button(onClick = onValueMatchButtonClicked) {
+            ElevatedButton(onClick = onValueMatchButtonClicked) {
                 Text("Value Match")
             }
         }

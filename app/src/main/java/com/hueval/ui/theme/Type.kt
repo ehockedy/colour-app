@@ -14,6 +14,10 @@ val Typography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
+    ),
+    // Button uses this: https://m3.material.io/components/buttons/specs
+    labelLarge = Typography().labelLarge.copy(
+        fontSize = 16.sp
     )
     /* Other default text styles to override
     titleLarge = TextStyle(
