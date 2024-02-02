@@ -1,7 +1,6 @@
 package com.hueval.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
@@ -34,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hueval.ui.components.ElevatedButton
 import com.hueval.ui.components.InGameToolbar
 import com.hueval.ui.components.RgbGuessSlider
@@ -62,7 +62,10 @@ fun ColourBox(colour: Color, text: String) {
         modifier = Modifier.padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text)
+        Text(
+            text,
+            fontSize = 18.sp,
+        )
         Card(modifier = Modifier
             .padding(PaddingValues(0.dp, 8.dp))
             .size(120.dp),
@@ -165,14 +168,17 @@ fun RgbGuess(
 
             val percentageDiff = calculatePercentageDifference(targetColour, finalGuess)
             Row (modifier = Modifier
-                .height(20.dp)
+                .height(32.dp)
                 .width(IntrinsicSize.Max)) {
                 AnimatedVisibility(
                     resultsMessageVisibleState,
                     enter = fadeIn(),
-                    exit = ExitTransition.None
+                    exit = fadeOut()
                 ) {
-                    Text(percentageDiffToResult(percentageDiff) + " You got a " + percentageDiff.toString() + "% match.")
+                    Text(
+                        percentageDiffToResult(percentageDiff) + " You got a " + percentageDiff.toString() + "% match.",
+                        fontSize = 20.sp,
+                    )
                 }
             }
         }

@@ -28,6 +28,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 val THUMB_DIAMETER = 32.dp
 val THUMB_PADDING = 3.dp
@@ -189,7 +190,9 @@ fun RgbGuessSlider(
             sliderColour.getLabel(),
             Modifier.padding(
                 end = 16.dp
-            )
+            ),
+            fontSize = 20.sp,
+            color = Color.Gray
         )
         ColourSlider(
             sliderColour,
