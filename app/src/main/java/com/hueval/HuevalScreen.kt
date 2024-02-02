@@ -36,7 +36,11 @@ fun HuevalApp(
             )
         }
         composable(route = HuevalScreen.RgbGuess.name) {
-            RgbGuess()
+            RgbGuess(
+                onHomeButtonClick = {
+                    navController.navigate(HuevalScreen.MainMenu.name)
+                }
+            )
         }
         composable(route = HuevalScreen.ValueMatch.name) {
             ValueMatch()

@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.hueval.ui.components.ElevatedButton
+import com.hueval.ui.components.InGameToolbar
 import com.hueval.ui.components.RgbGuessSlider
 import com.hueval.ui.components.SliderColour
 import kotlin.math.abs
@@ -103,7 +104,9 @@ const val SHOW_NEW_TARGET_TRANSITION_MS = 400
 const val RESET_SLIDERS_TRANSITION_MS = 700
 
 @Composable
-fun RgbGuess() {
+fun RgbGuess(
+    onHomeButtonClick: () -> Unit
+) {
     var isResultDisplayed by remember { mutableStateOf(false)}  // TODO replace with state enum?
     var isSliderResetActive by remember { mutableStateOf(false)}
     var isTargetColourResultShown by remember { mutableStateOf(false)}
@@ -120,6 +123,9 @@ fun RgbGuess() {
         finishedListener = {isSliderResetActive = false}
     )
 
+    InGameToolbar(
+        onHomeButtonClick
+    ) {}
     Column (
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceEvenly,
