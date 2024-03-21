@@ -3,6 +3,7 @@ package com.hueval.ui.theme
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.text.style.BaselineShift
@@ -16,26 +17,35 @@ val provider = GoogleFont.Provider(
 )
 
 val fontName = GoogleFont("Poppins")
-val fontFamily = FontFamily(
+val poppinsFamily = FontFamily(
     Font(googleFont = fontName, fontProvider = provider)
 )
+
+val dongleFamily = FontFamily(
+    androidx.compose.ui.text.font.Font(R.font.dongle_light, FontWeight.Light),
+)
+
+val fontFamily = dongleFamily
 
 // Set of Material typography styles to start with
 val Typography = Typography(
     bodySmall = Typography().bodySmall.copy(
         fontFamily = fontFamily,
+        fontSize = 24.sp,
     ),
     bodyMedium = Typography().bodyMedium.copy(
         fontFamily = fontFamily,
+        fontSize = 28.sp,
     ),
     // Default text uses this
     bodyLarge = TextStyle(
         fontFamily = fontFamily,
-        baselineShift = BaselineShift(-0.2f)
+        fontSize = 32.sp,
+        baselineShift = BaselineShift(-0.2f),
     ),
     // Button uses this: https://m3.material.io/components/buttons/specs
     labelLarge = Typography().labelLarge.copy(
-        fontSize = 16.sp,
+        fontSize = 32.sp,
         fontFamily = fontFamily,
     ),
 )

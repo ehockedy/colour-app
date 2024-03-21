@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
  * Source: https://blog.canopas.com/jetpack-compose-cool-button-click-effects-c6bbecec7bcb
  */
 enum class ButtonState { Pressed, Idle }
-fun Modifier.bounceClick() = composed {
+fun Modifier.bounceClick(onClick: (() -> Unit)? = null) = composed {
     var buttonState by remember { mutableStateOf(ButtonState.Idle) }
     val scale by animateFloatAsState(
         if (buttonState == ButtonState.Pressed) 0.95f else 1f,
@@ -41,7 +41,7 @@ fun Modifier.bounceClick() = composed {
         .clickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
-            onClick = {  }
+            onClick = onClick ?: {}
         )
         .pointerInput(buttonState) {
             awaitPointerEventScope {
@@ -66,7 +66,7 @@ fun ElevatedButton(
     Button(
         modifier = modifier.bounceClick(),
         onClick = onClick,
-        contentPadding = PaddingValues(16.dp, 16.dp),
+        contentPadding = PaddingValues(16.dp, 8.dp),
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 4.dp,
             pressedElevation = 1.dp

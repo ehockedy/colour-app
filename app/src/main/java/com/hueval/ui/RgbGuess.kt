@@ -64,7 +64,6 @@ fun ColourBox(colour: Color, text: String) {
     ) {
         Text(
             text,
-            fontSize = 18.sp,
         )
         Card(modifier = Modifier
             .padding(PaddingValues(0.dp, 8.dp))
@@ -168,7 +167,7 @@ fun RgbGuess(
 
             val percentageDiff = calculatePercentageDifference(targetColour, finalGuess)
             Row (modifier = Modifier
-                .height(32.dp)
+                .height(40.dp)
                 .width(IntrinsicSize.Max)) {
                 AnimatedVisibility(
                     resultsMessageVisibleState,
@@ -177,7 +176,6 @@ fun RgbGuess(
                 ) {
                     Text(
                         percentageDiffToResult(percentageDiff) + " You got a " + percentageDiff.toString() + "% match.",
-                        fontSize = 20.sp,
                     )
                 }
             }
@@ -246,7 +244,7 @@ fun RgbGuess(
         ) {
             Text(
                 text = if (isResultDisplayed) "Next Colour" else "Submit Guess",
-                color = Color.LightGray,
+                color = Color.White,
             )
         }
 

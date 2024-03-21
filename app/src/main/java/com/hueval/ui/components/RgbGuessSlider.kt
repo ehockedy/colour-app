@@ -191,7 +191,6 @@ fun RgbGuessSlider(
             Modifier.padding(
                 end = 16.dp
             ),
-            fontSize = 20.sp,
             color = Color.Gray
         )
         ColourSlider(
